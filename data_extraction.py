@@ -1,18 +1,38 @@
 #%%
 from database_utils import DatabaseConnector
+import pandas as pd
 
 class DataExtractor:
-    # This class will work as a utility class, in it you will be creating methods that help extract data from different data sources.
-    # The methods contained will be fit to extract data from a particular data source, these sources will include CSV files, an API and an S3 bucket.
-    def __init__(self, database_connector: DatabaseConnector) -> None:
-        if isinstance(database_connector, DatabaseConnector):
-            self.db_connector = database_connector
+    """
+    This class is a utility class to extract data from different sources.
+    """
+    @classmethod
+    def read_rds_table(cls, db_connector: DatabaseConnector, table_name: str) -> pd.DataFrame:
+        """
+        This is a class method that returns a pandas dataframe for the specified table_name in db_connector database.
+
+        Args:
+            db_connector (DatabaseConnector): an instance of DatabaseConnector.
+            table_name (str): the name of the table to extract as a pandas DataFrame.
+
+        Returns:
+            dataframe (pd.DataFrame): an instance of pandas DataFrame with the data specified in the table_name.
+
+        Raises:
+            ValueError: raises ValueError if the table_name is not in the database db_connector is connected to.
+            TypeError: raises TypeError if db_connector is not an instance of DatabaseConnector.
+        """
+        if isinstance(db_connector, DatabaseConnector):
+            db_tables = db_connector.list_db_tables()
+            if table_name in db_tables:
+                df = pd.read_sql(table_name, db_connector.engine)
+                return df
+            else:
+                raise ValueError(f"'{table_name}' table is not present in the database.")
         else:
-            raise TypeError("database_connector should be an instance of DatabaseConnector class")
+            raise TypeError("db_connector should be an instance of class DatabaseConnector.")
         
 
 # %%
 db_connector = DatabaseConnector("db_creds.yaml")
-d = DataExtractor(db_connector)
-d.db_connector
-# %%
+DataExtractor.read_rds_table(5, 'prabin').head()
