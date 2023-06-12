@@ -6,10 +6,10 @@ class DataExtractor:
     """
     This class is a utility class to extract data from different sources.
     """
-    @classmethod
-    def read_rds_table(cls, db_connector: DatabaseConnector, table_name: str) -> pd.DataFrame:
+    @staticmethod
+    def read_rds_table(db_connector: DatabaseConnector, table_name: str) -> pd.DataFrame:
         """
-        This is a class method that returns a pandas dataframe for the specified table_name in db_connector database.
+        This is a static method that returns a pandas dataframe for the specified table_name in db_connector database.
 
         Args:
             db_connector (DatabaseConnector): an instance of DatabaseConnector.
@@ -32,7 +32,3 @@ class DataExtractor:
         else:
             raise TypeError("db_connector should be an instance of class DatabaseConnector.")
         
-
-# %%
-db_connector = DatabaseConnector("db_creds.yaml")
-DataExtractor.read_rds_table(5, 'prabin').head()
