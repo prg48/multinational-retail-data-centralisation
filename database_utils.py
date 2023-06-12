@@ -2,10 +2,20 @@
 import yaml
 
 class DatabaseConnector:
-    # This class will be used to connect with and upload data to the database.
+    """
+    This class connects with and uploads data to the database.
 
-    @classmethod
-    def read_db_creds(cls, yaml_filepath: str) -> dict:
+    Attributes:
+        db_creds (dict): dictionary holding the database credentials
+    """
+    def __init__(self, db_creds) -> None:
+        """
+        Args:
+            db_creds (str): filepath to database credentials
+        """
+        self.db_creds = self.read_db_creds(db_creds)
+
+    def read_db_creds(self, yaml_filepath: str) -> dict:
         """
         This method reads the credentials in a yaml file and return a dictionary of the credentials.
         Args:
@@ -24,6 +34,8 @@ class DatabaseConnector:
 
 
 #%%
-yaml_config = DatabaseConnector.read_db_creds("db_creds.yaml")
-type(yaml_config)
+yaml_config = DatabaseConnector("db_creds.yaml")
+yaml_config.db_creds
+# %%
+help(DatabaseConnector)
 # %%
