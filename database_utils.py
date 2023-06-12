@@ -54,12 +54,3 @@ class DatabaseConnector:
         inspector = inspect(self.engine)
         return inspector.get_table_names()
 
-
-
-
-#%%
-connector = DatabaseConnector("db_creds.yaml")
-type(connector.list_db_tables())
-# %%
-help(DatabaseConnector)
-# %%
