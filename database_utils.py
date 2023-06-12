@@ -1,6 +1,6 @@
 #%%
 import yaml
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import create_engine, Engine, inspect
 
 class DatabaseConnector:
     """
@@ -8,24 +8,24 @@ class DatabaseConnector:
 
     Attributes:
         db_creds (dict): dictionary holding the database credentials
+        engine (SQLAlchemyEngine): a SQLAlchemy engine connected to database specified in db_creds
     """
     def __init__(self, db_creds) -> None:
         """
         Args:
             db_creds (str): filepath to database credentials
-            engine (Engine): a SQLAlchemy engine
         """
         self.db_creds = self.read_db_creds(db_creds)
         self.engine = self.init_db_engine()
 
-    def read_db_creds(self, yaml_filepath: str) -> dict:
+    def read_db_creds(self, yaml_filepath: str) -> dict[str, str]:
         """
         This method reads the credentials in a yaml file and return a dictionary of the credentials.
         Args:
             yaml_filepath (str): file path to the yaml file
         
         Returns:
-            dict: key value pair from the yaml file
+            dict (dict[str, str]): key value pair from the yaml file
         """
         try:
             with open(yaml_filepath, "r") as file:
@@ -39,17 +39,27 @@ class DatabaseConnector:
         This method reads the database credentials attribute of the class and returns a SQLAlchemy database engine
 
         Returns:
-            Engine: A SQLAlchemy engine initialised with the db_creds attribute of the class
+            Engine (SQLAlchemyEngine): A SQLAlchemy engine initialised with the db_creds attribute of the class
         """
         connection_str = f"postgresql://{self.db_creds['RDS_USER']}:{self.db_creds['RDS_PASSWORD']}@{self.db_creds['RDS_HOST']}:{self.db_creds['RDS_PORT']}/{self.db_creds['RDS_DATABASE']}"
         return create_engine(connection_str)
+    
+    def list_db_tables(self) -> list[str]:
+        """
+        This method returns the list of table names the class engine is connected to.
+
+        Returns:
+            table_names (list[str]): list of table names the class engine is connected to
+        """
+        inspector = inspect(self.engine)
+        return inspector.get_table_names()
 
 
 
 
 #%%
-yaml_config = DatabaseConnector("db_creds.yaml")
-yaml_config.engine
+connector = DatabaseConnector("db_creds.yaml")
+type(connector.list_db_tables())
 # %%
 help(DatabaseConnector)
 # %%
