@@ -80,9 +80,3 @@ class DataCleaning:
         print(f"length of data after cleaning: {len(clean_df)}.")
         print(f"Total rows dropped: {total_rows_dropped}.")
         return clean_df
-#%%
-db_connector = DatabaseConnector('db_creds.yaml')
-user_df = DataExtractor.read_rds_table(db_connector,'legacy_users')
-cleaned_df = DataCleaning.clean_user_data(user_df)
-cleaned_df.head()
-# %%
