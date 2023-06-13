@@ -1,6 +1,9 @@
 #%%
 from database_utils import DatabaseConnector
 import pandas as pd
+import requests
+import tabula
+import os
 
 class DataExtractor:
     """
@@ -33,9 +36,29 @@ class DataExtractor:
             raise TypeError("db_connector should be an instance of class DatabaseConnector.")
         
     @staticmethod
-    def retrieve_pdf_data():
-        pass
+    def retrieve_pdf_data(link: str) -> pd.DataFrame:
+        """
+        This method retrieves pdf data from a link, converts it to a pandas dataframe and returns it.
+        Args:
+            link (str): link to the pdf data
 
-#%%
-import requests
-# %%
+        Returns:
+            df (pd.DataFrame): dataframe of the pdf data
+        """
+        # pdf data file save location after download from link
+        file_destination = link.split('/')[-1]
+        
+        # download the pdf with requests
+        response = requests.get(link)
+
+        # write the content of the response to the file in the destination
+        with open(file_destination, "wb") as destination:
+            destination.write(response.content)
+
+        # read the locally saved pdf file with tabula and merge each page df to a single dataframe
+        pdf_df_lst = tabula.read_pdf(file_destination, pages='all')
+        
+        # remove the written file
+        os.remove(file_destination)
+
+        return pd.concat(pdf_df_lst, ignore_index=True)

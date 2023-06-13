@@ -58,7 +58,7 @@ class DatabaseConnector:
     
     def upload_to_db(self, data: pd.DataFrame, table_name: str) -> None:
         """
-        This method upload a dataframe to the local database. The local database configuration should be stored in a file named 'local_db_creds.yaml'.
+        This method uploads a dataframe to the local database. The local database configuration should be stored in a file named 'config/local_db_creds.yaml'.
         The local configuration should have the following variables defined in yaml file:
         
         Yaml Configuration Variables:
@@ -74,7 +74,7 @@ class DatabaseConnector:
             data (pd.DataFrame): dataframe to save in the database
             table_name (str): the table name in the database where the dataframe is to be saved
         """
-        local_creds = self.read_db_creds("local_db_creds.yaml")
+        local_creds = self.read_db_creds("config/local_db_creds.yaml")
         local_engine = create_engine(f"{local_creds['DATABASE_TYPE']}+{local_creds['DB_API']}://{local_creds['USER']}:{quote_plus(local_creds['PASSWORD'])}@{local_creds['HOST']}:{local_creds['PORT']}/{local_creds['DATABASE']}")
         
         data.to_sql(table_name, local_engine, if_exists='replace', index=False)
