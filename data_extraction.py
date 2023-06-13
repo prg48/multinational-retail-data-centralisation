@@ -32,3 +32,10 @@ class DataExtractor:
         else:
             raise TypeError("db_connector should be an instance of class DatabaseConnector.")
         
+    @staticmethod
+    def retrieve_pdf_data():
+        pass
+
+#%%
+import requests
+# %%
