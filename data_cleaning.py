@@ -178,7 +178,7 @@ class DataCleaning:
         # drop rows with non digit values
         len_before_dropping = len(clean_df)
         non_digit_values = clean_df['card_number'].str.isdigit() == False
-        clean_df[~non_digit_values]
+        clean_df = clean_df[~non_digit_values]
         len_after_dropping = len(clean_df)
         print(f"{len_before_dropping - len_after_dropping} rows dropped for non digit values in card_number column")
 
