@@ -62,3 +62,18 @@ class DataExtractor:
         os.remove(file_destination)
 
         return pd.concat(pdf_df_lst, ignore_index=True)
+    
+    @staticmethod
+    def list_number_of_stores(endpoint: str, headers: dict) -> int:
+        """
+        This method takes an API endpoint and header and returns the number of stores available to get from the API endpoint.
+
+        Args:
+            endpoint (str): API endpoint
+            headers (str): API headers
+
+        Returns:
+            int: the number of stores available to get for from the API endpoint
+        """
+        response = requests.get(endpoint, headers=headers)
+        return int(response.json()['number_stores'])
