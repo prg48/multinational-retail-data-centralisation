@@ -70,10 +70,56 @@ class DataExtractor:
 
         Args:
             endpoint (str): API endpoint
-            headers (str): API headers
+            headers (dict): key-value pair dictionary for headers
 
         Returns:
             int: the number of stores available to get for from the API endpoint
         """
         response = requests.get(endpoint, headers=headers)
         return int(response.json()['number_stores'])
+
+    @staticmethod
+    def retrieve_stores_data(endpoint: str, num_of_stores: int, headers: dict) -> pd.DataFrame:
+        """
+        This method takes an API endpoint and header and retrieves all the stores' data specified in the argument.
+
+        Args:
+            endpoint (str): API endpoint for store
+            num_of_stores (int): number of stores' data to create pandas dataframe for
+            headers (dict): key value pair dictionary for headers
+
+        Returns:
+            pd.DataFrame: pandas dataframe of all the specified stores' data
+
+        Raises:
+            KeyError: raises a KeyError if the keys for the data of stores are not consistent.
+        """
+
+        # retrieve the first store data to create a dictionary with relevant keys
+        response = requests.get(endpoint + '/' + '0', headers=headers)
+        store_keys = response.json().keys()
+        all_store_dict = {}
+        for key in store_keys:
+            all_store_dict[key] = []
+
+        # for each store available to query, retrieve the data and append the corresponding value of the dict to all_store_dict
+        # for all stores retrieve the data
+        for idx in range(0, num_of_stores):
+            response = requests.get(endpoint + "/" + str(idx), headers=headers)
+            response_json = response.json()
+
+            # check if all the keys match to our all stores' dictionary
+            if len(response_json.keys()) != len(all_store_dict.keys()):
+                raise KeyError("The keys of store are not consistent.")
+            
+            # if keys length matches, append each value of the dictionary to our skeleton dictionary
+            for key in all_store_dict.keys():
+                all_store_dict[key].append(response_json[key])
+        
+        # create a dataframe of all stores' dictionary and return it
+        return pd.DataFrame(all_store_dict)
+    
+    @staticmethod
+    def extract_from_s3():
+        pass
+        
