@@ -320,7 +320,64 @@ class DataCleaning:
     
     @staticmethod
     def convert_product_weights(data: pd.DataFrame) -> pd.DataFrame:
-        pass
+        """
+        This method converts the weight column of the data to kg.
+
+        Args:
+            data (pd.DataFrame): the dataframe whose weight column needs to be converted to kg
+
+        Returns:
+            pd.DataFrame: the dataframe whose weight has been converted to kg.
+        """
+        df = data.copy()
+
+        # remove nan values for weight
+        df = df[~df['weight'].isna()]
+
+        # weight contains some invalid weights remove those rows. values contain uppercase and numbers
+        df = df[~df['weight'].str.contains('^[A-Z0-9]+$')]
+
+        #custom parser to convert weights to kgs
+        def custom_weight_converter(weight: str) -> Union[float, pd.NA]:
+            """
+            custom parser that takes a weight string and returns its conversion to kg 
+            this parser is local in scope to convert_product_weights method
+
+            Args:
+                weight (str): weight to convert to kg
+
+            Returns:
+                Union[float, pd.NA]: if weight can be converted returns float of conversion, else pd.NA
+            """
+            weight_value_lst = [char for char in str(weight) if char.isdigit() or char == '.' or char == 'x']
+            metric_lst = [char for char in str(weight) if char.isalpha() and char != 'x']
+
+            if 'x' in weight_value_lst:
+                idx_of_x = weight_value_lst.index('x')
+                first_weight_value = float(''.join(weight_value_lst[:idx_of_x]))
+                second_weight_value = float(''.join(weight_value_lst[idx_of_x + 1:]))
+                weight_value = first_weight_value * second_weight_value
+            else:
+                weight_value = float(''.join(weight_value_lst))
+                
+            metric = ''.join(metric_lst)
+
+            if metric == 'kg':
+                return weight_value
+            elif metric == 'g' or metric == 'ml':
+                return weight_value/1000
+            elif metric == 'oz':
+                return weight_value * 0.0283495
+            else:
+                return pd.NA
+
+        # create a new column weight(in kg) with the converted weight converter
+        df['weight(in kg)'] = df['weight'].apply(custom_weight_converter)
+
+        # remove the old weight column
+        df.drop(columns=['weight'], inplace=True)
+
+        return df
 
 
 
