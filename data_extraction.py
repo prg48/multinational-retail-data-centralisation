@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import tabula
 import os
+import boto3
 
 class DataExtractor:
     """
@@ -120,6 +121,34 @@ class DataExtractor:
         return pd.DataFrame(all_store_dict)
     
     @staticmethod
-    def extract_from_s3():
-        pass
-        
+    def extract_from_s3(s3_address: str) -> pd.DataFrame:
+        """
+        This method takes an amazon s3 address, extracts the data from that address and returns a dataframe.
+        The user must be logged in to aws cli to download from aws s3 bucket
+
+        Args:
+            s3_address (str): amazon s3 address for the data
+
+        Returns
+            pd.DataFrame: pandas dataframe for the data
+        """
+        # separate the s3 part of s3_address
+        address_split = s3_address.split('//')
+
+        # assign s3 client, separated bucket path, filename, and the local path to save the downloaded file
+        s3 = boto3.client('s3')
+        bucket_name = '/'.join(address_split[-1].split('/')[:-1])
+        filename = address_split[-1].split('/')[-1]
+        local_file_path = os.path.join(os.getcwd(), filename)
+
+        # download the data file from s3 buckeet
+        s3.download_file(bucket_name, filename, local_file_path)
+
+        # read the downloaded file
+        df = pd.read_csv(local_file_path)
+
+        # remove the local downloaded file
+        os.remove(local_file_path)
+
+        return df
+

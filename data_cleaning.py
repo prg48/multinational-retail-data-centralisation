@@ -317,6 +317,10 @@ class DataCleaning:
         clean_df = clean_df[columns]
 
         return clean_df
+    
+    @staticmethod
+    def convert_product_weights(data: pd.DataFrame) -> pd.DataFrame:
+        pass
 
 
 

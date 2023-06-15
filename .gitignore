@@ -1,5 +1,4 @@
 *.pyc
 local_db_creds.yaml
 /class-test-notebooks
-card_cleaning.ipynb
-store_cleaning.ipynb
+*.ipynb
