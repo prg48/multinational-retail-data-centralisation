@@ -409,6 +409,56 @@ class DataCleaning:
         df.reset_index(inplace=True)
 
         return df
+    
+    @staticmethod
+    def clean_date_data(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        method that cleans the date dataframe and returns the cleaned dataframe.
+
+        Args:
+            data (pd.DataFrame): dataframe to be cleaned
+
+        Returns:
+            pd.DataFrame: cleaned dataframe
+        """
+
+        df = data.copy()
+
+        # create a temp_timestamp column to convert timestamp to datetime and check if any invalid timestamps
+        df['temp_timestamp'] = pd.to_datetime(df['timestamp'], errors="coerce", format='%H:%M:%S')
+
+        # remove the rows with na temp_timestamps
+        df = df[~df['temp_timestamp'].isna()]
+
+        # remove the temp_timestamp column
+        df.drop(columns=['temp_timestamp'], inplace=True)
+
+        # some months are only 1 digit long. make them two digits long
+        df['month'] = df['month'].apply(lambda x: '0'+x if len(x) < 2 else x)
+
+        # some days are also only 1 digit long. make them two digits long
+        df['day'] = df['day'].apply(lambda x: '0'+x if len(x) < 2 else x)
+
+        # combine the year, day, month and timestamp to create a new column datetime
+        df['day'] = df['day'].astype(str)
+        df['month'] = df['month'].astype(str)
+        df['year'] = df['year'].astype(str)
+        df['timestamp'] = df['timestamp'].astype(str)
+        df['datetime'] = df['year'] + '-' + df['month'] + '-' + df['day'] + ' ' + df['timestamp']
+
+        # convert datetime column to pd.datetime
+        df['datetime'] = pd.to_datetime(df['datetime'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+
+        # reset the index
+        df.reset_index(drop=True, inplace=True)
+
+        # rearrange the columns
+        columns = ['date_uuid', 'datetime', 'time_period', 'year', 'month', 'day', 'timestamp']
+        df = df[columns]
+
+        return df
+
+
 
 
 

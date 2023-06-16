@@ -151,4 +151,23 @@ class DataExtractor:
         os.remove(local_file_path)
 
         return df
+    
+    @staticmethod
+    def retrieve_date_events_data(link: str) -> pd.DataFrame:
+        """
+        This method retrieves the date event data and returns a pandas dataframe.
+
+        Args:
+            link (str): the link to the date events data
+
+        Returns
+            pd.DataFrame: pandas dataframe of the date events data
+        """
+        # get the filename from the link
+        filename = link.split('//')[-1].split('/')[-1]
+
+        # send a request 
+        response = requests.get(link)
+
+        return pd.DataFrame(response.json())
 
