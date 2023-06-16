@@ -68,43 +68,23 @@ class DataCleaning:
         Returns:
             df (pd.DataFrame): cleaned data
         """
-        print("Cleaning User Data!!!!!!!!")
-
-        # keep track of total dropped rows
-        total_rows_dropped = 0
 
         # make a copy
         clean_df = data.copy()
 
         # drop users with duplicate uuid
-        len_before_dropping = len(clean_df)
         clean_df.drop_duplicates(subset=['user_uuid'], inplace=True)
-        len_after_dropping = len(clean_df)
-        total_rows_dropped += (len_before_dropping - len_after_dropping)
-        print(f"Dropped {len_before_dropping - len_after_dropping} rows with duplicate user uuid.")
 
         # drop null rows
-        len_before_dropping = len(clean_df)
         clean_df.dropna(inplace=True)
-        len_after_dropping = len(clean_df)
-        total_rows_dropped += (len_before_dropping - len_after_dropping)
-        print(f"Dropped {len_before_dropping - len_after_dropping} rows with null values.")
 
         # convert date_of_birth to pandas datetime and drop any rows whose date could not be converted
-        len_before_dropping = len(clean_df)
         clean_df['date_of_birth'] = pd.to_datetime(clean_df['date_of_birth'], errors='coerce')
         clean_df.dropna(subset=['date_of_birth'])
-        len_after_dropping = len(clean_df)
-        total_rows_dropped += (len_before_dropping - len_after_dropping)
-        print(f"Dropped {len_before_dropping - len_after_dropping} rows while converting date of birth.")
 
         # convert join_date to pandas datetime and drop any rows whose date could not be converted
-        len_before_dropping = len(clean_df)
         clean_df['join_date'] = pd.to_datetime(clean_df['join_date'], errors='coerce')
         clean_df.dropna(subset=['join_date'])
-        len_after_dropping = len(clean_df)
-        total_rows_dropped += (len_before_dropping - len_after_dropping)
-        print(f"Dropped {len_before_dropping - len_after_dropping} rows while converting join date.")
 
         # drop the index column
         clean_df.drop(columns=['index'], inplace=True)
@@ -115,11 +95,7 @@ class DataCleaning:
         clean_df = clean_df[cols]
 
         # remove rows with invalid email
-        len_before_dropping = len(clean_df)
         clean_df = clean_df[clean_df['email_address'].str.contains('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]
-        len_after_dropping = len(clean_df)
-        total_rows_dropped += (len_before_dropping - len_after_dropping)
-        print(f"Dropped {len_before_dropping - len_after_dropping} rows while checking for valid email.")
 
         # replace 'GGB' country code to 'GB'
         clean_df['country_code'] = clean_df['country_code'].replace('GGB', 'GB')
@@ -138,35 +114,22 @@ class DataCleaning:
             df (pd.DataFrame): cleaned card data
         """            
 
-        print("Cleaning card data!!!!!!!")
         clean_df = data.copy()
 
         # drop NA values
-        len_before_dropping = len(clean_df)
         clean_df.dropna(inplace=True)
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping - len_after_dropping} rows dropped for NA values")
 
         # drop Null rows
-        len_before_dropping = len(clean_df)
         null_values = clean_df.isnull()
         clean_df = clean_df[~null_values.any(axis=1)]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping - len_after_dropping} rows dropped for Null values")
 
         # drop rows with string 'NULL'
-        len_before_dropping = len(clean_df)
         null_string_values = clean_df.applymap(lambda x:x == 'NULL')
         clean_df = clean_df[~null_string_values.any(axis=1)]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping - len_after_dropping} rows dropped for NULL string values")
 
         # drop rows with string 'NAN'
-        len_before_dropping = len(clean_df)
         nan_string_values = clean_df.applymap(lambda x:x == 'NaN')
         clean_df = clean_df[~nan_string_values.any(axis=1)]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping - len_after_dropping} rows dropped for NaN string values")
 
         ######## card_number column checks
         # convert column to str before replacement
@@ -176,11 +139,8 @@ class DataCleaning:
         clean_df['card_number'] = clean_df['card_number'].str.replace('?', '')
 
         # drop rows with non digit values
-        len_before_dropping = len(clean_df)
         non_digit_values = clean_df['card_number'].str.isdigit() == False
         clean_df = clean_df[~non_digit_values]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping - len_after_dropping} rows dropped for non digit values in card_number column")
 
         ######### card_number length matching card_provider checks
         clean_df['card_length'] = clean_df['card_number'].str.len()
@@ -240,16 +200,10 @@ class DataCleaning:
         clean_df.loc[clean_df['store_type'] == 'Web Portal', 'latitude'] = '0'
 
         # drop the row that is none for the latitude column
-        len_before_dropping = len(clean_df)
         clean_df = clean_df[~clean_df.isnull().any(axis=1)]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping-len_after_dropping} None rows dropped for latitude column")
 
         # drop rows that contains gibberish data for address
-        len_before_dropping = len(clean_df)
         clean_df = clean_df[clean_df['address'].str.contains(' ')]
-        len_after_dropping = len(clean_df)
-        print(f"{len_before_dropping-len_after_dropping} rows dropped for nonsensible address data")
 
         # convert longitude column to digit
         clean_df['longitude'] = pd.to_numeric(clean_df['longitude'], errors='coerce')
@@ -378,6 +332,62 @@ class DataCleaning:
         df.drop(columns=['weight'], inplace=True)
 
         return df
+
+    @staticmethod
+    def clean_products_data(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        method that cleans the product dataframe and returns the cleaned dataframe
+
+        Args:
+            data (pd.DataFrame): dataframe for products
+
+        Returns:
+            pd.DataFrame: cleaned dataframe
+        """
+        # convert the weights to kg
+        weight_converted_product_df = DataCleaning.convert_product_weights(data)
+
+        # create a copy of weight converted df to clean
+        df = weight_converted_product_df.copy()
+
+        # remove the Unnamed: 0 column
+        df.drop(columns=['Unnamed: 0'], inplace=True)
+
+        # create a separate column for product price in float format
+        def custom_retrieve_product_price(product_price: str) -> float:
+            """
+            custom parser to retrieve the product price and convert to float
+
+            Args:
+                product_price (str): product price
+
+            Returns:
+                float: float conversion of the product price after retieving the value
+            """
+            product_price_lst = [char for char in str(product_price) if char.isdigit() or char == '.']
+            return float(''.join(product_price_lst))
+
+        df['product_price(in £s)'] = df['product_price'].apply(custom_retrieve_product_price)
+
+        # drop the product price column
+        df.drop(columns=['product_price'], inplace=True)
+
+        # convert the dates with custom parser
+        df['date_added'] = df['date_added'].apply(DataCleaning.custom_date_parser)
+
+        # convert date_added to pd.datetime
+        df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
+
+        # reset the index
+        df.reset_index(drop=True, inplace=True)
+
+        # rearrange the columns
+        columns = ['uuid', 'product_name', 'category', 'weight(in kg)', 'product_price(in £s)',
+                'date_added', 'removed', 'EAN', 'product_code']
+        df = df[columns]
+
+        return df
+
 
 
 
