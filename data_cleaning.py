@@ -382,9 +382,31 @@ class DataCleaning:
         df.reset_index(drop=True, inplace=True)
 
         # rearrange the columns
-        columns = ['uuid', 'product_name', 'category', 'weight(in kg)', 'product_price(in £s)',
-                'date_added', 'removed', 'EAN', 'product_code']
+        columns = ['product_code', 'product_name', 'category', 'weight(in kg)', 'product_price(in £s)',
+                'date_added', 'removed', 'EAN', 'uuid']
         df = df[columns]
+
+        return df
+    
+    @staticmethod
+    def clean_orders_data(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        method that cleans the orders dataframe and returns the cleaned dataframe.
+
+        Args:
+            data (pd.DataFrame): dataframe to be cleaned
+
+        Returns:
+            pd.DataFrame: cleaned dataframe
+        """
+
+        df = data.copy()
+
+        # drop the columns level_0, index, first_name, last_name, 1
+        df.drop(columns=['level_0', 'index', 'first_name', 'last_name', '1'], inplace=True)
+
+        # reset the index
+        df.reset_index(inplace=True)
 
         return df
 
