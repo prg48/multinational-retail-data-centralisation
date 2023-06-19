@@ -2,5 +2,5 @@
 local_db_creds.yaml
 /class-test-notebooks
 *.ipynb
-alter_data_types.py
-main.py
+# alter_data_types.py
+# main.py
