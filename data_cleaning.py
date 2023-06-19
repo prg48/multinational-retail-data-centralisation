@@ -1,6 +1,6 @@
-#%%
 import pandas as pd
 from typing import Union
+import re
 
 class DataCleaning:
     """
@@ -94,8 +94,28 @@ class DataCleaning:
         cols = [cols[-1]] + cols[:-1]
         clean_df = clean_df[cols]
 
+        # clean double '@' in emails
+        def custom_email_parser(email: str) -> str:
+            """
+            custom parser to replace '@@' with '@'
+
+            Args:
+                email (str): email string
+
+            Returns:
+                str: email string with '@@' replaced by '@'
+            """
+            if '@@' not in email:
+                return email
+            
+            email_char_list = list(email)
+            email_char_list.remove('@')
+            return ''.join(email_char_list)
+
+        clean_df['email_address'] = clean_df['email_address'].apply(custom_email_parser)
+            
         # remove rows with invalid email
-        clean_df = clean_df[clean_df['email_address'].str.contains('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')]
+        clean_df = clean_df[clean_df['email_address'].str.contains('^[\w_.+-]+@[\w-]+\.[a-zA-Z0-9-.]+$', flags=re.UNICODE, regex=True)]
 
         # replace 'GGB' country code to 'GB'
         clean_df['country_code'] = clean_df['country_code'].replace('GGB', 'GB')
@@ -145,21 +165,21 @@ class DataCleaning:
         ######### card_number length matching card_provider checks
         clean_df['card_length'] = clean_df['card_number'].str.len()
 
-        # 3 anomalies are present when checked with groupby
-        # 2 occurences of Discover card with card length 14
-        # 1 occurence of Maestro card with card length 9
-        # 1 occurence of VISA 16 digit card with card length 14
-        discover_anomalies = (clean_df['card_provider'] == 'Discover') & (clean_df['card_length'] == 14)
-        maestro_anomalies = (clean_df['card_provider'] == 'Maestro') & (clean_df['card_length'] == 9)
-        visa_anomalies = (clean_df['card_provider'] == 'VISA 16 digit') & (clean_df['card_length'] == 14)
+        # # 3 anomalies are present when checked with groupby
+        # # 2 occurences of Discover card with card length 14
+        # # 1 occurence of Maestro card with card length 9
+        # # 1 occurence of VISA 16 digit card with card length 14
+        # discover_anomalies = (clean_df['card_provider'] == 'Discover') & (clean_df['card_length'] == 14)
+        # maestro_anomalies = (clean_df['card_provider'] == 'Maestro') & (clean_df['card_length'] == 9)
+        # visa_anomalies = (clean_df['card_provider'] == 'VISA 16 digit') & (clean_df['card_length'] == 14)
 
-        discover_anomalies_index = clean_df[discover_anomalies].index
-        maestro_anomalies_index = clean_df[maestro_anomalies].index
-        visa_anomalies_index = clean_df[visa_anomalies].index
+        # discover_anomalies_index = clean_df[discover_anomalies].index
+        # maestro_anomalies_index = clean_df[maestro_anomalies].index
+        # visa_anomalies_index = clean_df[visa_anomalies].index
 
-        clean_df = clean_df.drop(index=discover_anomalies_index)
-        clean_df = clean_df.drop(index=maestro_anomalies_index)
-        clean_df = clean_df.drop(index=visa_anomalies_index)
+        # clean_df = clean_df.drop(index=discover_anomalies_index)
+        # clean_df = clean_df.drop(index=maestro_anomalies_index)
+        # clean_df = clean_df.drop(index=visa_anomalies_index)
 
         # remove the card length column
         clean_df.drop(columns=['card_length'], inplace=True)
