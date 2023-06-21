@@ -30,3 +30,9 @@ git clone https://github.com/prg48/multinational-retail-data-centralisation.git
 
 ### Setting up the environment
 The environment can be setup for the project either using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) or [virtualenv](https://virtualenv.pypa.io/en/latest/user_guide.html).
+
+### Installing requirements
+The requirements for the project can be installed with:
+```bash
+pip install -r requirements.txt
+```
