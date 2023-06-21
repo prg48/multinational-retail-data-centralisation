@@ -12,11 +12,13 @@ The data is stored in the following tables in the local Postgres database named 
 * `orders_table`: orders details, fact table.
 * `dim_date_times`: date and time details.
 
+## Project Overview Diagram
 The following diagram provides an overview of the data collection, cleaning, and storage process.
 
 ![data-centralisation-overview](images/data_centralisation.svg)
 
-The following diagram is an Entity-Relationship Diagram for the database.
+## Local Database ER Diagram
+The following diagram is an Entity-Relationship Diagram for the final `sales_data` local Postgres database.
 
 ![ER-relationship-diagram](images/ER-diagram.svg)
 
@@ -27,6 +29,7 @@ The following diagram is an Entity-Relationship Diagram for the database.
     - [Installing requirements](#installing-requirements)
     - [Setting up local Postgres database](#setting-up-local-postgres-database)
     - [Retrieving, cleaning and saving data](#retrieving-cleaning-and-saving-data)
+2. [Running Queries](#running-queries)
 
 ## Getting Started
 ### Cloning the project
@@ -71,3 +74,55 @@ OR
 python3 main.py
 ```
 if using python v3.x. 
+
+## Running Queries
+Following are some examples of queries run on the local database. Please refer to the [local database ER diagram](#local-database-er-diagram) to get an overview of the tables' relationships.
+
+* `Determining what type of store is generating the most sales in germany`
+
+```sql
+WITH ops AS (
+    SELECT o.store_code AS store_code,
+        o.product_code AS product_code,
+        o.product_quantity AS product_quantity,
+        p.product_price AS product_price,
+        s.store_type AS store_type,
+        s.country_code AS country_code,
+        o.product_quantity * p.product_price AS sales
+    FROM orders_table AS o
+    JOIN dim_products AS p ON o.product_code = p.product_code
+    JOIN dim_store_details AS s ON o.store_code = s.store_code
+    WHERE s.country_code = 'DE'
+)
+
+SELECT SUM(sales) AS total_sales, store_type, country_code
+FROM ops
+GROUP BY store_type, country_code
+```
+
+results:
+
+| total_sales | store_type  | country_code |
+|-------------|-------------|--------------|
+| 198373.57   | Outlet      | DE           |
+| 247634.20   | Mall Kiosk  | DE           |
+| 384625.03   | Super Store | DE           |
+| 1109909.59  | Local       | DE           |
+
+* `The staff numbers in each of the countries the company sells in.`
+
+```sql
+SELECT SUM(stafF_numbers) as total_staff_numbers, country_code
+FROM dim_store_details
+GROUP BY country_code
+```
+
+results:
+
+| total_staff_numbers | country_code |
+|---------------------|--------------|
+| 13307               | GB           |
+| 6123                | DE           |
+| 1384                | US           |
+
+Please feel free to run and test as many queries as you like. Thank you for your interest in the project.
