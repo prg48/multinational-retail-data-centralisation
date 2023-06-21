@@ -41,3 +41,15 @@ pip install -r requirements.txt
 
 ### Setting up local Postgres database
 PostgreSQL is required to run the project. please follow [this link](https://www.postgresql.org/download/) if you don't have PostgreSQL installed in your local system.
+
+A `sales_data` database must be created in the local PostgreSQL. please follow (this link)[https://www.postgresql.org/docs/current/sql-createdatabase.html] or (this link)[https://www.tutorialsteacher.com/postgresql/create-database] if using pgadmin4 or psql to create a new database.
+
+A local database credentials file is required for the project to connect to the newly created `sales_data` database to store the cleaned data after retrieval. The local database credentials must be stored in `config/local_db_creds.yaml` with the following information. Please make sure the information is correct or else the project won't be able to connect to the local database to save the cleaned data.
+
+* `DATABASE_TYPE`: postgresql
+* `DB_API`: psycopg2
+* `HOST`: localhost
+* `USER`: [please enter the username for the database for this field. by default it is `postgres`.]
+* `PASSWORD`: [please enter the password setup for the local database for this field.]
+* `PORT`: 5432
+* `DATABASE`: sales_data
