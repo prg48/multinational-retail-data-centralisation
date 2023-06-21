@@ -20,6 +20,8 @@ The following diagram provides an overview of the data collection, cleaning, and
 1. [Getting Started](#getting-started)
     - [Cloning the project](#cloning-the-project)
     - [Setting up the environment](#setting-up-the-environment)
+    - [Installing requirements](#installing-requirements)
+    - [Setting up local Postgres database](#setting-up-local-postgres-database)
 
 ## Getting Started
 ### Cloning the project
@@ -36,3 +38,6 @@ The requirements for the project can be installed with:
 ```bash
 pip install -r requirements.txt
 ```
+
+### Setting up local Postgres database
+PostgreSQL is required to run the project. please follow [this link](https://www.postgresql.org/download/) if you don't have PostgreSQL installed in your local system.
