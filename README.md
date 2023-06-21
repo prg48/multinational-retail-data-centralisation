@@ -19,6 +19,7 @@ The following diagram provides an overview of the data collection, cleaning, and
 ## Table of Contents
 1. [Getting Started](#getting-started)
     - [Cloning the project](#cloning-the-project)
+    - [Setting up the environment](#setting-up-the-environment)
 
 ## Getting Started
 ### Cloning the project
@@ -26,3 +27,6 @@ The project can be cloned with:
 ```bash
 git clone https://github.com/prg48/multinational-retail-data-centralisation.git
 ```
+
+### Setting up the environment
+The environment can be setup for the project either using [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) or [virtualenv](https://virtualenv.pypa.io/en/latest/user_guide.html).
