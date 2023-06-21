@@ -22,6 +22,7 @@ The following diagram provides an overview of the data collection, cleaning, and
     - [Setting up the environment](#setting-up-the-environment)
     - [Installing requirements](#installing-requirements)
     - [Setting up local Postgres database](#setting-up-local-postgres-database)
+    - [Retrieving, cleaning and saving data](#retrieving-cleaning-and-saving-data)
 
 ## Getting Started
 ### Cloning the project
@@ -42,7 +43,7 @@ pip install -r requirements.txt
 ### Setting up local Postgres database
 PostgreSQL is required to run the project. please follow [this link](https://www.postgresql.org/download/) if you don't have PostgreSQL installed in your local system.
 
-A `sales_data` database must be created in the local PostgreSQL. please follow (this link)[https://www.postgresql.org/docs/current/sql-createdatabase.html] or (this link)[https://www.tutorialsteacher.com/postgresql/create-database] if using pgadmin4 or psql to create a new database.
+A `sales_data` database must be created in the local PostgreSQL. please follow [this link](https://www.postgresql.org/docs/current/sql-createdatabase.html) or [this link](https://www.tutorialsteacher.com/postgresql/create-database) if using pgadmin4 or psql to create a new database.
 
 A local database credentials file is required for the project to connect to the newly created `sales_data` database to store the cleaned data after retrieval. The local database credentials must be stored in `config/local_db_creds.yaml` with the following information. Please make sure the information is correct or else the project won't be able to connect to the local database to save the cleaned data.
 
@@ -53,3 +54,16 @@ A local database credentials file is required for the project to connect to the 
 * `PASSWORD`: [please enter the password setup for the local database for this field.]
 * `PORT`: 5432
 * `DATABASE`: sales_data
+
+### Retrieving, cleaning and saving data
+The data can be retrieved, cleaned and saved in the local database with:
+```bash
+python main.py
+```
+
+OR
+
+```bash
+python3 main.py
+```
+if using python v3.x. 
