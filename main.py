@@ -5,7 +5,7 @@ from alter_data_types import AlterDatabase
 
 def retrieve_data_and_create_card_table():
     """
-    This method retrieves card data from public amazon s3 bucket, cleans the data and create a table in local database.
+    This method retrieves card sdata from public amazon s3 bucket, cleans the data and create a table in local database.
     """
     # retrieve card data
     card_df = DataExtractor.retrieve_pdf_data("https://data-handling-public.s3.eu-west-1.amazonaws.com/card_details.pdf")

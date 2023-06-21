@@ -1,4 +1,3 @@
-#%%
 from database_utils import DatabaseConnector
 import pandas as pd
 import requests
@@ -8,7 +7,7 @@ import boto3
 
 class DataExtractor:
     """
-    This class is a utility class to extract data from different sources.
+    This class is a utility class to extFract data from different sources.
     """
     @staticmethod
     def read_rds_table(db_connector: DatabaseConnector, table_name: str) -> pd.DataFrame:
@@ -170,4 +169,3 @@ class DataExtractor:
         response = requests.get(link)
 
         return pd.DataFrame(response.json())
-

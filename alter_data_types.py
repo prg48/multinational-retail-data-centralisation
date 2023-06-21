@@ -7,7 +7,7 @@ import pandas as pd
 class AlterDatabase:
     """
     This class is to alter the sales_data database tables according to predefined alterations.
-    Further, this method also adds foreign key to the single source of truth table, orders_table.
+    Further, this method also adds foreign keys to the fact table, orders_table.
     This class should only be run after the database creation and poopulation with DatabaseConnector, DatabaseExtractor and DatabaseCleaning class.
     """
     def __init__(self):

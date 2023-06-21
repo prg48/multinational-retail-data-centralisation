@@ -477,10 +477,3 @@ class DataCleaning:
         df = df[columns]
 
         return df
-
-
-
-
-
-
-# %%
