@@ -15,3 +15,14 @@ The data is stored in the following tables in the local Postgres database named 
 The following diagram provides an overview of the data collection, cleaning, and storage process.
 
 ![data-centralisation-overview](images/data_centralisation.svg)
+
+## Table of Contents
+1. [Getting Started](#getting-started)
+    - [Cloning the project](#cloning-the-project)
+
+## Getting Started
+### Cloning the project
+The project can be cloned with:
+```bash
+git clone https://github.com/prg48/multinational-retail-data-centralisation.git
+```
