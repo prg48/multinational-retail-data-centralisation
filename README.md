@@ -78,7 +78,7 @@ if using python v3.x.
 ## Running Queries
 Following are some examples of queries run on the local database. Please refer to the [local database ER diagram](#local-database-er-diagram) to get an overview of the tables' relationships.
 
-* `Determining what type of store is generating the most sales in germany`
+#### `Determining what type of store is generating the most sales in germany`
 
 ```sql
 WITH ops AS (
@@ -109,7 +109,7 @@ results:
 | 384625.03   | Super Store | DE           |
 | 1109909.59  | Local       | DE           |
 
-* `The staff numbers in each of the countries the company sells in.`
+#### `The staff numbers in each of the countries the company sells in.`
 
 ```sql
 SELECT SUM(stafF_numbers) as total_staff_numbers, country_code
